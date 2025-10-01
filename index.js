@@ -17,3 +17,4 @@ app.use((req, res, next) => {
   next();
 });
 // Voeg dit toe VOOR je routes app.use((req, res, next) => { res.header('Access-Control-Allow-Origin', '*'); res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS'); res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization'); next(); }); // Of gebruik de cors package: // npm install cors const cors = require('cors'); app.use(cors());
+// Voeg dit toe VOOR je routes app.use((req, res, next) => { res.header('Access-Control-Allow-Origin', '*'); res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS'); res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization'); next(); }); // Of gebruik de cors package: // npm install cors const cors = require('cors'); app.use(cors());
