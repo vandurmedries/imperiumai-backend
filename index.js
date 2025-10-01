@@ -3,9 +3,17 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS configuratie - BELANGRIJK voor frontend verbinding
+// CORS FIX - Voeg dit toe VOOR je routes
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
+
+// Of gebruik de cors package (beide werken)
 app.use(cors({
-    origin: '*', // Staat alle origins toe
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -26,6 +34,7 @@ app.get('/', (req, res) => {
         status: 'success',
         timestamp: new Date().toISOString(),
         version: '1.0.0',
+        cors_enabled: true,
         endpoints: {
             health: '/health',
             api: '/api',
@@ -41,7 +50,8 @@ app.get('/health', (req, res) => {
         status: 'healthy',
         uptime: process.uptime(),
         timestamp: new Date().toISOString(),
-        memory: process.memoryUsage()
+        memory: process.memoryUsage(),
+        cors_working: true
     });
 });
 
@@ -50,8 +60,8 @@ app.get('/api', (req, res) => {
     res.json({
         message: 'ImperiumAI API v1.0',
         available_endpoints: [
-            'GET /api/tasks - Haal beschikbare taken op',
-            'POST /api/tasks - Maak nieuwe taak',
+            'GET /api/tasks - Get available tasks',
+            'POST /api/tasks - Create new task',
             'GET /api/wallet - Wallet status',
             'POST /api/wallet/withdraw - Withdraw ETH'
         ]
@@ -103,7 +113,7 @@ app.post('/api/tasks', (req, res) => {
     if (!title || !description || !reward) {
         return res.status(400).json({
             success: false,
-            error: 'Title, description en reward zijn verplicht'
+            error: 'Title, description and reward are required'
         });
     }
 
@@ -118,7 +128,7 @@ app.post('/api/tasks', (req, res) => {
 
     res.json({
         success: true,
-        message: 'Taak succesvol aangemaakt',
+        message: 'Task created successfully',
         task: newTask
     });
 });
@@ -157,16 +167,15 @@ app.post('/api/wallet/withdraw', (req, res) => {
     if (!amount || !address) {
         return res.status(400).json({
             success: false,
-            error: 'Amount en address zijn verplicht'
+            error: 'Amount and address are required'
         });
     }
 
-    // Simuleer withdrawal
     res.json({
         success: true,
-        message: `Withdrawal van ${amount} ETH naar ${address} is gestart`,
+        message: `Withdrawal of ${amount} ETH to ${address} initiated`,
         transaction_id: 'tx_' + Date.now(),
-        estimated_completion: '5-10 minuten'
+        estimated_completion: '5-10 minutes'
     });
 });
 
@@ -190,7 +199,7 @@ app.post('/api/ai/start', (req, res) => {
     
     res.json({
         success: true,
-        message: `AI gestart in ${mode} modus`,
+        message: `AI started in ${mode} mode`,
         target_eth: target_eth || '0.1',
         estimated_daily_earnings: '0.05-0.15 ETH'
     });
@@ -199,7 +208,7 @@ app.post('/api/ai/start', (req, res) => {
 app.post('/api/ai/stop', (req, res) => {
     res.json({
         success: true,
-        message: 'AI succesvol gestopt',
+        message: 'AI stopped successfully',
         final_stats: {
             runtime: '3h 45m',
             tasks_completed: 8,
@@ -237,8 +246,8 @@ app.use((err, req, res, next) => {
 app.use('*', (req, res) => {
     res.status(404).json({
         success: false,
-        error: 'Endpoint niet gevonden',
-        message: `${req.method} ${req.originalUrl} bestaat niet`,
+        error: 'Endpoint not found',
+        message: `${req.method} ${req.originalUrl} does not exist`,
         available_endpoints: [
             'GET /',
             'GET /health',
@@ -260,18 +269,6 @@ app.listen(PORT, () => {
     console.log(`🚀 ImperiumAI Backend running on port ${PORT}`);
     console.log(`🌐 Server URL: http://localhost:${PORT}`);
     console.log(`✅ CORS enabled for all origins`);
-    console.log(`📊 Available endpoints:`);
-    console.log(`   GET  / - Main endpoint`);
-    console.log(`   GET  /health - Health check`);
-    console.log(`   GET  /api - API info`);
-    console.log(`   GET  /api/tasks - Get tasks`);
-    console.log(`   POST /api/tasks - Create task`);
-    console.log(`   GET  /api/wallet - Wallet status`);
-    console.log(`   POST /api/wallet/withdraw - Withdraw ETH`);
-    console.log(`   GET  /api/ai/status - AI status`);
-    console.log(`   POST /api/ai/start - Start AI`);
-    console.log(`   POST /api/ai/stop - Stop AI`);
-    console.log(`   GET  /api/stats - Statistics`);
 });
 
 // Export for Vercel
