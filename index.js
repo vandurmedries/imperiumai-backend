@@ -276,12 +276,3 @@ app.listen(PORT, () => {
 
 // Export for Vercel
 module.exports = app;
-
-Wat doet deze code:
-
-✅ CORS Fix - Lost het cross-origin probleem op
-✅ Alle Endpoints - Compleet werkende API
-✅ Error Handling - Goede foutafhandeling
-✅ Logging - Alle requests worden gelogd
-✅ JSON Support - Kan JSON data ontvangen/versturen
-✅ Vercel Compatible - Werkt perfect op Vercel
