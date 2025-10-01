@@ -1,22 +1,21 @@
 const express = require('express');
-const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS FIX - Voeg dit toe VOOR je routes
+// CORS FIX - Handmatig (geen extra packages nodig)
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+        return;
+    }
+    
     next();
 });
-
-// Of gebruik de cors package (beide werken)
-app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
 // JSON parsing middleware
 app.use(express.json());
@@ -268,7 +267,7 @@ app.use('*', (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 ImperiumAI Backend running on port ${PORT}`);
     console.log(`🌐 Server URL: http://localhost:${PORT}`);
-    console.log(`✅ CORS enabled for all origins`);
+    console.log(`✅ CORS enabled manually - no extra packages needed`);
 });
 
 // Export for Vercel
